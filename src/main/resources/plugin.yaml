@@ -1,0 +1,19 @@
+apiVersion: plugin.halo.run/v1alpha1
+kind: Plugin
+metadata:
+  name: PluginCommentWidget
+spec:
+  enabled: true
+  requires: ">=2.13.0"
+  author:
+    name: 困困鱼
+    website: https://moony.la
+  logo: logo.svg
+  homepage: https://github.com/chengzhongxue/plugin-pix-comment-widget
+  displayName: "pix主题评论组件"
+  description: "为用户前台提供完整的评论解决方案"
+  configMapName: plugin-comment-widget-configmap
+  settingName: plugin-comment-widget-settings
+  license:
+    - name: "GPL-3.0"
+      url: "https://github.com/halo-dev/plugin-comment-widget/blob/main/LICENSE"
