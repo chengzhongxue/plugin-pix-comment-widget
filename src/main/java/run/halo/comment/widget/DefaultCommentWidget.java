@@ -25,7 +25,7 @@ import run.halo.app.theme.dialect.CommentWidget;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DefaultCommentWidget implements CommentWidget {
+public class  DefaultCommentWidget implements CommentWidget {
     static final PropertyPlaceholderHelper PROPERTY_PLACEHOLDER_HELPER = new PropertyPlaceholderHelper("${", "}");
 
     private final PluginWrapper pluginWrapper;
@@ -66,10 +66,19 @@ public class DefaultCommentWidget implements CommentWidget {
 
         var basicConfig = settingFetcher.fetch(BasicConfig.GROUP, BasicConfig.class)
                 .orElse(new BasicConfig());
-        // placeholderHelper only support string, so we need to convert boolean to string
-        properties.setProperty("withReplies", String.valueOf(basicConfig.isWithReplies()));
+        properties.setProperty("size", String.valueOf(basicConfig.getSize()));
         properties.setProperty("replySize", String.valueOf(basicConfig.getReplySize()));
+        properties.setProperty("withReplies", String.valueOf(basicConfig.isWithReplies()));
+        properties.setProperty("withReplySize", String.valueOf(basicConfig.getWithReplySize()));
 
+        var avatarConfig = settingFetcher.fetch(AvatarConfig.GROUP, AvatarConfig.class)
+                .orElse(new AvatarConfig());
+        properties.setProperty("useAvatarProvider", String.valueOf(avatarConfig.isEnable()));
+        properties.setProperty("avatarProvider", String.valueOf(avatarConfig.getProvider()));
+        properties.setProperty("avatarProviderMirror", String.valueOf(avatarConfig.getProviderMirror()));
+        properties.setProperty("avatarPolicy", String.valueOf(avatarConfig.getPolicy()));
+
+        // placeholderHelper only support string, so we need to convert boolean to string
         return PROPERTY_PLACEHOLDER_HELPER.replacePlaceholders("""
                 <div id="${domId}"></div>
                 <script>
@@ -79,8 +88,14 @@ public class DefaultCommentWidget implements CommentWidget {
                       group: "${group}",
                       kind: "${kind}",
                       name: "${name}",
+                      size: ${size},
+                      replySize: ${replySize},
                       withReplies: ${withReplies},
-                      replySize: ${replySize}
+                      withReplySize: ${withReplySize},
+                      useAvatarProvider: ${useAvatarProvider},
+                      avatarProvider: "${avatarProvider}",
+                      avatarProviderMirror: "${avatarProviderMirror}",
+                      avatarPolicy: "${avatarPolicy}",
                     }
                   );
                 </script>
@@ -88,11 +103,23 @@ public class DefaultCommentWidget implements CommentWidget {
     }
 
     @Data
-    static class BasicConfig {
+    private static class BasicConfig {
         public static final String GROUP = "basic";
-        private boolean withReplies;
+        private int size;
         private int replySize;
+        private boolean withReplies;
+        private int withReplySize;
     }
+
+    @Data
+    private static class AvatarConfig {
+        public static final String GROUP = "avatar";
+        private boolean enable;
+        private String provider;
+        private String providerMirror;
+        private String policy;
+    }
+
 
     private String domIdFrom(String group, String kind, String name) {
         Assert.notNull(name, "The name must not be null.");

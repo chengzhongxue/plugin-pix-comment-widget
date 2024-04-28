@@ -37,6 +37,7 @@ public class CommentWidgetHeadProcessor implements TemplateHeadProcessor {
         return PROPERTY_PLACEHOLDER_HELPER.replacePlaceholders("""
                 <!-- plugin-comment-widget start -->
                 <script src="/plugins/PluginCommentWidget/assets/static/comment-widget.iife.js?version=${version}"></script>
+                <link rel="stylesheet" href="/plugins/PluginCommentWidget/assets/static/style.css?version=${version}" />
                 <!-- plugin-comment-widget end -->
                 """, properties);
     }

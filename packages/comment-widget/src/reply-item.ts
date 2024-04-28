@@ -9,6 +9,8 @@ import { LS_UPVOTED_REPLIES_KEY } from './constant';
 import { consume } from '@lit/context';
 import { baseUrlContext } from './context';
 import varStyles from './styles/var';
+import { getPolicyInstance } from './avatar/avatar-policy';
+
 
 export class ReplyItem extends LitElement {
   @consume({ context: baseUrlContext })
@@ -107,8 +109,8 @@ export class ReplyItem extends LitElement {
 
   override render() {
     return html`
-      <base-comment-item
-        .userAvatar="${this.reply?.owner.avatar}"
+      <base-comment-item 
+        .userAvatar="${handleReplyAvatar(this.reply)}"
         .userDisplayName="${this.reply?.owner.displayName}"
         .content="${this.reply?.spec.content || ''}"
         .creationTime="${this.reply?.metadata.creationTimestamp ?? undefined}"
@@ -160,7 +162,7 @@ export class ReplyItem extends LitElement {
         <base-comment-item-action
           slot="action"
           @click="${() => (this.showReplyForm = !this.showReplyForm)}"
-          .text=${this.showReplyForm ? '取消回复' : '回复'}
+          .text=''
         >
           <svg
             slot="icon"
@@ -248,6 +250,15 @@ export class ReplyItem extends LitElement {
 }
 
 customElements.get('reply-item') || customElements.define('reply-item', ReplyItem);
+
+function handleReplyAvatar(reply: ReplyVo | undefined): string | undefined {
+  const avatarPolicy = getPolicyInstance();
+  if (avatarPolicy === undefined) {
+    return reply?.owner.avatar;
+  }
+  return avatarPolicy.applyReplyPolicy(reply);
+}
+
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -7,8 +7,14 @@ interface Props {
   group: string;
   kind: string;
   name: string;
-  withReplies?: boolean;
+  size?: number;
   replySize?: number;
+  withReplies?: boolean;
+  withReplySize?: number;
+  useAvatarProvider: boolean;
+  avatarProvider?: string;
+  avatarProviderMirror?: string;
+  avatarPolicy?: string;
 }
 
 export function init(el: string, props: Props) {
@@ -19,17 +25,23 @@ export function init(el: string, props: Props) {
   }
 
   const commentWidget = document.createElement(
-    'comment-widget'
+      'comment-widget'
   ) as CommentWidget;
 
   commentWidget.kind = props.kind;
   commentWidget.group = props.group;
   commentWidget.version = 'v1alpha1';
   commentWidget.name = props.name;
-  commentWidget.withReplies = props.withReplies || false;
+  commentWidget.size = props.size || 20;
   commentWidget.replySize = props.replySize || 10;
+  commentWidget.withReplies = props.withReplies || false;
+  commentWidget.withReplySize = props.withReplySize || 10;
   commentWidget.emojiDataUrl =
-    '/plugins/PluginCommentWidget/assets/static/emoji/native.json';
+      '/plugins/PluginCommentWidget/assets/static/emoji/native.json';
+  commentWidget.useAvatarProvider = props.useAvatarProvider || false;
+  commentWidget.avatarProvider = props.avatarProvider || '';
+  commentWidget.avatarProviderMirror = props.avatarProviderMirror || '';
+  commentWidget.avatarPolicy = props.avatarPolicy || '';
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

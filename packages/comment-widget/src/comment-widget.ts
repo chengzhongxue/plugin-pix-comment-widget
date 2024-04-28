@@ -1,11 +1,10 @@
-import { LitElement, css, html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { CommentVoList, User } from '@halo-dev/api-client';
 import { repeat } from 'lit/directives/repeat.js';
 import baseStyles from './styles/base';
 import { provide } from '@lit/context';
 import {
-  allowAnonymousCommentsContext,
   baseUrlContext,
   currentUserContext,
   emojiDataUrlContext,
@@ -16,12 +15,25 @@ import {
   toastContext,
   versionContext,
   withRepliesContext,
+  allowAnonymousCommentsContext,
+  useAvatarProviderContext,
+  avatarPolicyContext,
+  avatarProviderContext,
+  avatarProviderMirrorContext,
 } from './context';
 import './comment-form';
 import './comment-item';
 import './comment-pagination';
 import varStyles from './styles/var';
 import { ToastManager } from './lit-toast';
+import {
+  AnonymousUserPolicy,
+  AllUserPolicy,
+  NoAvatarUserPolicy,
+  AvatarPolicyEnum,
+  setPolicyInstance,
+} from './avatar/avatar-policy';
+import { setAvatarProvider } from './avatar/providers';
 
 export class CommentWidget extends LitElement {
   @provide({ context: baseUrlContext })
@@ -44,13 +56,35 @@ export class CommentWidget extends LitElement {
   @property({ type: String })
   name = '';
 
+  @property({ type: Number, attribute: 'size' })
+  size: number = 20;
+
+  @provide({ context: replySizeContext })
+  @property({ type: Number, attribute: 'reply-size' })
+  replySize: number = 10;
+
   @provide({ context: withRepliesContext })
   @property({ type: Boolean, attribute: 'with-replies' })
   withReplies = false;
 
-  @provide({ context: replySizeContext })
-  @property({ type: Number, attribute: 'reply-size' })
-  replySize = 10;
+  @property({ type: Number, attribute: 'with-reply-size' })
+  withReplySize = 10;
+
+  @provide({ context: useAvatarProviderContext })
+  @property({ type: Boolean, attribute: 'use-avatar-provider' })
+  useAvatarProvider = false;
+
+  @provide({ context: avatarProviderContext })
+  @property({ type: String, attribute: 'avatar-provider' })
+  avatarProvider = '';
+
+  @provide({ context: avatarProviderMirrorContext })
+  @property({ type: String, attribute: 'avatar-provider-mirror' })
+  avatarProviderMirror = '';
+
+  @provide({ context: avatarPolicyContext })
+  @property({ type: String, attribute: 'avatar-policy' })
+  avatarPolicy = '';
 
   @provide({ context: emojiDataUrlContext })
   @property({ type: String, attribute: 'emoji-data-url' })
@@ -206,12 +240,42 @@ export class CommentWidget extends LitElement {
     await this.fetchComments({ scrollIntoView: true });
   }
 
+  initAvatarProvider() {
+    if (!this.useAvatarProvider) {
+      return;
+    }
+    setAvatarProvider(this.avatarProvider, this.avatarProviderMirror);
+  }
+
+  initAvatarPolicy() {
+    if (!this.useAvatarProvider) {
+      console.log(this.useAvatarProvider);
+      setPolicyInstance(undefined);
+      return;
+    }
+    switch (this.avatarPolicy) {
+      case AvatarPolicyEnum.ALL_USER_POLICY: {
+        setPolicyInstance(new AllUserPolicy());
+        break;
+      }
+      case AvatarPolicyEnum.NO_AVATAR_USER_POLICY: {
+        setPolicyInstance(new NoAvatarUserPolicy());
+        break;
+      }
+      case AvatarPolicyEnum.ANONYMOUS_USER_POLICY:
+      default:
+        setPolicyInstance(new AnonymousUserPolicy());
+    }
+  }
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.toastManager = new ToastManager();
     this.fetchCurrentUser();
     this.fetchComments();
     this.fetchGlobalInfo();
+    this.initAvatarProvider();
+    this.initAvatarPolicy();
   }
 
   static override styles = [

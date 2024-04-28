@@ -158,7 +158,7 @@ export class BaseCommentItem extends LitElement {
         color: var(--a-color);
       }
 
-      li .com_right .left time {
+      li .com_right .left time,li .com_right .left .item__meta-info {
         font-size: 13px;
         color: var(--time-color);
       }

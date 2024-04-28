@@ -26,7 +26,7 @@ const varStyles = css`
       'Noto Color Emoji'
     );
 
-    --component-form-input-bg-color: var(--halo-comment-widget-component-form-input-bg-color, #f7f9f7);
+    --component-form-input-bg-color: var(--halo-comment-widget-component-form-input-pix-bg-color, #f7f9f7);
     
     --component-form-input-color: var(--halo-comment-widget-component-form-input-color, #3b4351);
 
@@ -37,11 +37,11 @@ const varStyles = css`
 
     /* Components */
     --component-form-button-submit-bg-color: var(
-      --halo-comment-widget-component-form-button-submit-bg-color,
+      --halo-comment-widget-component-form-button-submit-pix-bg-color,
       #22bb6d
     );
     --component-form-button-submit-color: var(
-            --halo-comment-widget-component-form-button-submit-color,
+            --halo-comment-widget-component-form-button-submit-pix-color,
             #f6f7ff
     );
     
@@ -62,16 +62,16 @@ const varStyles = css`
     );
     
     --component-pagination-button-bg-color-hover: var(
-      --halo-comment-widget-component-pagination-button-bg-color-hover,
+      --halo-comment-widget-component-pagination-button-pix-bg-color-hover,
       #22bb6d
     );
     
     --component-pagination-button-bg-color-active: var(
-      --halo-comment-widget-component-pagination-button-bg-color-active,
+      --halo-comment-widget-component-pagination-button-pix-bg-color-active,
       #d2ddd5
     );
     --component-pagination-button-border-color-active: var(
-      --halo-comment-widget-component-pagination-button-border-color-active,
+      --halo-comment-widget-component-pagination-button-pix-border-color-active,
       #76937f
     );
 
